@@ -15,16 +15,7 @@
     "module": "esnext",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
-    "paths": {
-			"components/*": ["components/*"],
-			"contexts/*": ["contexts/*"],
-			"elements/*": ["elements/*"],
-			"styles/*": ["styles/*"],
-			"utils/*": ["utils/*"],
-			"static/*": ["static/*"],
-			"pages/*": ["pages/*"]
-    }
+    "jsx": "preserve"
   },
   "include": ["src", "next-env.d.ts"],
   "exclude": ["node_modules"]
