@@ -1,9 +1,5 @@
-import path from "path";
 import express from "express";
-import dotenv from "dotenv";
-// import { BASE_ROUTE } from "../constants/routes";
-
-dotenv.config({ path: path.join(__dirname, "config", "config.env") });
+import { Socket } from "socket.io";
 
 const HOST = "LOCALHOST";
 const PORT = 5000;
@@ -17,14 +13,33 @@ app.use(express.json());
 // Express body parser
 app.use(express.urlencoded({ extended: true }));
 
-// // Test
-// app.get(`${BASE_ROUTE}`, (req, res, next) => {
-//   res.status(200).json({
-//     success: true,
-//     message: "Welcome to the API V1",
-//   });
-// });
-
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`Server running on ${HOST}:${PORT}`);
+});
+
+const io = require("socket.io")(server, {
+  cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST", "PUT"],
+  },
+});
+
+io.on("connection", (socket: Socket) => {
+  socket.emit("me", socket.id);
+
+  socket.on("disconnect", () => {
+    socket.broadcast.emit("callEnded");
+  });
+
+  socket.on("call", (data) => {
+    io.to(data.userToCall).emit("call", {
+      signal: data.signalData,
+      from: data.from,
+      name: data.name,
+    });
+  });
+
+  socket.on("answer", (data) => {
+    io.to(data.to).emit("callAccepted", data.signal);
+  });
 });
