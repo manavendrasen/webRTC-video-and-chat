@@ -26,6 +26,8 @@ const io = require("socket.io")(server, {
 
 io.on("connection", (socket: Socket) => {
   socket.emit("me", socket.id);
+  console.log("Connected", socket.id);
+  
 
   socket.on("disconnect", () => {
     socket.broadcast.emit("callEnded");
